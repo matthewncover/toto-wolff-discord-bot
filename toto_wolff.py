@@ -27,12 +27,14 @@ def get_wolff_quotes():
     url = "https://www.quotes.net/authors/Toto+Wolff"
     soup = BeautifulSoup(requests.get(url).content, "html.parser")
     wolff_quotes += [
-        result.get_text() for result in soup.find_all("blockquote")
+        result.get_text() 
+        for result in soup.find_all("blockquote")
     ]
 
     super_legit_wolff_quotes = [
-        "I'm gay for Valtteri Bottas.",
-        "I'm hella stoked Valtteri Bottas won the Austrian Grand Prix."
+        "I'm secretly gay for Valtteri Bottas.",
+        "I'm hella stoked Valtteri Bottas won the Austrian Grand Prix.",
+        "I have unrealized cuckold fantasies of Valtteri Bottas making sweet love to my wife down by the fire, but she's not down."
     ]
 
     return wolff_quotes, super_legit_wolff_quotes
