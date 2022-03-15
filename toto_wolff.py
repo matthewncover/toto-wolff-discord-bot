@@ -4,7 +4,8 @@ from discord.ext import tasks, commands
 import json, requests, numpy as np
 from bs4 import BeautifulSoup
 
-id_dict = json.load(open("ids_aof.json"))
+id_dict = json.load(open("ids_debug.json"))
+# id_dict = json.load(open("ids_aof.json"))
 
 def get_wolff_quotes():
 
@@ -33,8 +34,8 @@ def get_wolff_quotes():
 
     super_legit_wolff_quotes = [
         "I'm secretly gay for Valtteri Bottas.",
-        "I'm hella stoked Valtteri Bottas won the Austrian Grand Prix.",
-        "I have unrealized cuckold fantasies of Valtteri Bottas making sweet love to my wife down by the fire, but she's not down."
+        "Contrary to public opinion, the liberal media, and words I may have quite explicitly said, I was actually stoked Valtteri Bottas won the Austrian Grand Prix.",
+        "I have unrealized cuckold fantasies of Valtteri Bottas making sweet love to my wife down by the fire, but she's not down. And that makes me feel sad."
     ]
 
     return wolff_quotes, super_legit_wolff_quotes
