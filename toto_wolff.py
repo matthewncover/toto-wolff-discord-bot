@@ -4,9 +4,6 @@ from discord.ext import tasks, commands
 import json, requests, numpy as np
 from bs4 import BeautifulSoup
 
-import warnings
-warnings.simplefilter('ignore')
-
 id_dict = json.load(open("ids_aof.json"))
 
 def get_wolff_quotes():
@@ -49,9 +46,9 @@ def choose_wolff_quote():
 
 wolff_quotes, super_legit_wolff_quotes = get_wolff_quotes()
 
-client = commands.Bot(command_prefix="!")
+client = commands.Bot(command_prefix="$420")
 
-@tasks.loop(seconds=60)
+@tasks.loop(minutes=5)
 async def send_message():
 
     channel = client.get_channel(id_dict["channel-id"])
