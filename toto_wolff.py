@@ -1,11 +1,11 @@
 import discord
 from discord.ext import tasks, commands
 
-import json, requests, numpy as np
+import json, requests, numpy as np, pandas as pd
 from bs4 import BeautifulSoup
 
-id_dict = json.load(open("ids_debug.json"))
-# id_dict = json.load(open("ids_aof.json"))
+# id_dict = json.load(open("ids_debug.json"))
+id_dict = json.load(open("ids_aof.json"))
 
 def get_wolff_quotes():
 
@@ -32,11 +32,18 @@ def get_wolff_quotes():
         for result in soup.find_all("blockquote")
     ]
 
+    # from F1 drive to survive
+    wolff_quotes += [
+        "Do you drink? Do you drink during the day? You do."
+    ]
+
     super_legit_wolff_quotes = [
         "I'm secretly gay for Valtteri Bottas.",
         "Contrary to public opinion, the liberal media, and words I may have quite explicitly said, I was actually stoked Valtteri Bottas won the Austrian Grand Prix.",
         "I have unrealized cuckold fantasies of Valtteri Bottas making sweet love to my wife down by the fire, but she's not down. And that makes me feel sad."
     ]
+
+    wolff_quotes = pd.Series(wolff_quotes).unique().tolist()
 
     return wolff_quotes, super_legit_wolff_quotes
 
