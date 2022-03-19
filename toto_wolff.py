@@ -38,9 +38,7 @@ def get_wolff_quotes():
     ]
 
     super_legit_wolff_quotes = [
-        "I'm secretly gay for Valtteri Bottas.",
         "Contrary to public opinion, the liberal media, and words I may have quite explicitly said, I was actually stoked Valtteri Bottas won the Austrian Grand Prix.",
-        "I have unrealized cuckold fantasies of Valtteri Bottas making sweet love to my wife down by the fire, but she's not down. And that makes me feel sad."
     ]
 
     wolff_quotes = pd.Series(wolff_quotes).unique().tolist()
@@ -49,10 +47,10 @@ def get_wolff_quotes():
 
 def choose_wolff_quote():
 
-    if np.random.random() > 0.95:
-        return np.random.choice(super_legit_wolff_quotes, 1)[0]
-    else:
-        return np.random.choice(wolff_quotes, 1)[0]
+    # if np.random.random() > 0.95:
+    #     return np.random.choice(super_legit_wolff_quotes, 1)[0]
+    # else:
+    return np.random.choice(wolff_quotes, 1)[0]
 
 wolff_quotes, super_legit_wolff_quotes = get_wolff_quotes()
 
