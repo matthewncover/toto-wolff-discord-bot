@@ -1,69 +1,67 @@
 import discord
 from discord.ext import tasks, commands
 
-import json, requests, numpy as np, pandas as pd
-from bs4 import BeautifulSoup
+import os, json, numpy as np, pandas as pd, datetime as dt
 
-# id_dict = json.load(open("ids_debug.json"))
-id_dict = json.load(open("ids_aof.json"))
+os.chdir("./discord_bots/toto-wolff-discord-bot")
 
-def get_wolff_quotes():
+base_date = "Jan 8 2023 07:00:00"
+id_dict = json.load(open("ids_debug.json"))
+# id_dict = json.load(open("ids_aof.json"))
 
-    wolff_quotes = []
+def read_wolff_quotes():
+    df_wolff = pd.read_csv("wolff_quotes.csv")
+    df_wolff.datetime_posted = pd.to_datetime(df_wolff.datetime_posted)
 
-    url = "https://www.brainyquote.com/authors/toto-wolff-quotes"
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
-    wolff_quotes += [
-        result.get_text().replace("\n", "")
-        for result in soup.find_all("a", {"class": "b-qt"})
-    ]
+    return df_wolff
 
-    url = "https://www.whatshouldireadnext.com/quotes/authors/toto-wolff"
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
-    wolff_quotes += [
-        result.get_text().replace("\n", "") 
-        for result in soup.find_all("a", {"class": "quote-card__text"})
-    ]
+def select_quote(df_wolff):
+    selected_quote = np.random.choice(
+        df_wolff
+        .sort_values(by="datetime_posted")
+        .head(10)
+        .quotes
+        .tolist()
+    )
+    
+    return selected_quote
 
-    url = "https://www.quotes.net/authors/Toto+Wolff"
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
-    wolff_quotes += [
-        result.get_text() 
-        for result in soup.find_all("blockquote")
-    ]
+def update_save_data(df_wolff, selected_quote):
+    df_wolff.loc[df_wolff.quotes == selected_quote, "datetime_posted"] = dt.datetime.now()
 
-    # from F1 drive to survive
-    wolff_quotes += [
-        "Do you drink? Do you drink during the day? You do."
-    ]
+    df_wolff.to_csv("wolff_quotes.csv", index=False)
 
-    super_legit_wolff_quotes = [
-        "Contrary to public opinion, the liberal media, and words I may have quite explicitly said, I was actually stoked Valtteri Bottas won the Austrian Grand Prix.",
-    ]
+def is_time_to_post_quote():
 
-    wolff_quotes = pd.Series(wolff_quotes).unique().tolist()
+    def get_timestamp(date_str):
 
-    return wolff_quotes, super_legit_wolff_quotes
+        return dt.datetime.strptime(date_str, "%b %d %Y %H:%M:%S").timestamp()
 
-def choose_wolff_quote():
+    base_timestamp = get_timestamp(base_date)
 
-    # if np.random.random() > 0.95:
-    #     return np.random.choice(super_legit_wolff_quotes, 1)[0]
-    # else:
-    return np.random.choice(wolff_quotes, 1)[0]
+    current_timestamp = dt.datetime.now().timestamp()
 
-wolff_quotes, super_legit_wolff_quotes = get_wolff_quotes()
+    seconds_diff_from_week = abs(base_timestamp - current_timestamp) % 604800
+    if seconds_diff_from_week <= 150:
+        return True
+    elif 604800 - seconds_diff_from_week < 150:
+        return True
 
-client = commands.Bot(command_prefix="$420")
+    return False
+
+client = commands.Bot(command_prefix="$toto")
 
 @tasks.loop(minutes=5)
 async def send_message():
 
-    channel = client.get_channel(id_dict["channel-id"])
+    if is_time_to_post_quote():
+        channel = client.get_channel(id_dict["channel-id"])
 
-    quote = choose_wolff_quote()
+        df_wolff = read_wolff_quotes()
+        quote = select_quote(df_wolff)
+        update_save_data(df_wolff, quote)
 
-    await channel.send(quote)
+        await channel.send(quote)
 
 @client.event
 async def on_ready():
